@@ -11,35 +11,44 @@ const Messages = () => {
   const [loading, setLoading] = useState(true)
   const [selectedChat, setSelectedChat] = useState(null)
   const [profiles, setProfiles] = useState({})
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetchConversations()
-    
-    // Subscribe to new messages
-    const subscription = supabase
-      .channel('messages_updates')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'messages',
-          filter: `receiver_id=eq.${user.id}`
-        },
-        () => {
-          fetchConversations()
-        }
-      )
-      .subscribe()
+    if (user?.id) {
+      fetchConversations()
+      
+      // Subscribe to new messages
+      const subscription = supabase
+        .channel('messages_updates')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'messages',
+            filter: `receiver_id=eq.${user.id}`
+          },
+          () => {
+            fetchConversations()
+          }
+        )
+        .subscribe()
 
-    return () => {
-      subscription.unsubscribe()
+      return () => {
+        subscription.unsubscribe()
+      }
     }
-  }, [user.id])
+  }, [user?.id])
 
   const fetchConversations = async () => {
+    if (!user?.id) {
+      setLoading(false)
+      return
+    }
+
     try {
       setLoading(true)
+      setError(null)
       
       // Get all messages involving the user
       const { data: messagesData, error: messagesError } = await supabase
@@ -84,7 +93,7 @@ const Messages = () => {
       if (userIds.size > 0) {
         const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, full_name, avatar_url')
+          .select('id, full_name')
           .in('id', Array.from(userIds))
 
         if (profilesError) throw profilesError
@@ -99,6 +108,8 @@ const Messages = () => {
       setConversations(Array.from(conversationsMap.values()))
     } catch (error) {
       console.error('Error fetching conversations:', error)
+      console.error('Error details:', error.message, error.code)
+      setError(error.message || 'Failed to load messages. Please try again later.')
     } finally {
       setLoading(false)
     }
@@ -117,6 +128,26 @@ const Messages = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader className="animate-spin text-primary-600" size={48} />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl shadow-md p-12 text-center">
+            <MessageCircle className="mx-auto text-red-400 mb-4" size={64} />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Messages</h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button 
+              onClick={fetchConversations}
+              className="btn-primary"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
       </div>
     )
   }

@@ -8,7 +8,7 @@ import { MapPin } from 'lucide-react'
 
 const CATEGORIES = [
   'All',
-  'Electronics',
+  'Informatique et Multimedia',
   'Vehicles',
   'Real Estate',
   'Furniture',

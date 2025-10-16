@@ -179,7 +179,13 @@ const AdDetail = () => {
                   {!isOwner && (
                     <div className="space-y-3 pt-4 border-t">
                       <button
-                        onClick={() => setShowChat(true)}
+                        onClick={() => {
+                          if (!user) {
+                            navigate('/login', { state: { from: `/ads/${id}` } })
+                            return
+                          }
+                          setShowChat(true)
+                        }}
                         className="btn-primary w-full flex items-center justify-center space-x-2"
                       >
                         <MessageCircle size={18} />

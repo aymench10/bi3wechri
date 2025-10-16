@@ -34,7 +34,18 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
               (newMsg.sender_id === user.id && newMsg.receiver_id === otherUserId) ||
               (newMsg.sender_id === otherUserId && newMsg.receiver_id === user.id)
             ) {
-              setMessages(prev => [...prev, newMsg])
+              // Only add if not already in the list (avoid duplicates from optimistic updates)
+              setMessages(prev => {
+                const exists = prev.some(msg => 
+                  msg.id === newMsg.id || 
+                  (msg.content === newMsg.content && 
+                   msg.sender_id === newMsg.sender_id && 
+                   Math.abs(new Date(msg.created_at) - new Date(newMsg.created_at)) < 2000)
+                )
+                if (exists) return prev
+                return [...prev, newMsg]
+              })
+              
               if (newMsg.receiver_id === user.id) {
                 markMessageAsRead(newMsg.id)
               }
@@ -106,22 +117,48 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
     e.preventDefault()
     if (!newMessage.trim() || sending) return
 
+    const messageContent = newMessage.trim()
+    const tempId = `temp-${Date.now()}`
+    
+    // Optimistic UI update - add message immediately
+    const optimisticMessage = {
+      id: tempId,
+      ad_id: adId,
+      sender_id: user.id,
+      receiver_id: otherUserId,
+      content: messageContent,
+      is_read: false,
+      created_at: new Date().toISOString()
+    }
+    
+    setMessages(prev => [...prev, optimisticMessage])
+    setNewMessage('')
+
     try {
       setSending(true)
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .insert({
           ad_id: adId,
           sender_id: user.id,
           receiver_id: otherUserId,
-          content: newMessage.trim()
+          content: messageContent
         })
+        .select()
+        .single()
 
       if (error) throw error
-      setNewMessage('')
+      
+      // Replace temp message with real one
+      setMessages(prev => 
+        prev.map(msg => msg.id === tempId ? data : msg)
+      )
     } catch (error) {
       console.error('Error sending message:', error)
-      alert('Failed to send message')
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(msg => msg.id !== tempId))
+      alert('Failed to send message. Please try again.')
+      setNewMessage(messageContent) // Restore message
     } finally {
       setSending(false)
     }
