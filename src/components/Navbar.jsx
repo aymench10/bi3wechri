@@ -108,9 +108,9 @@ const Navbar = () => {
                 <Link to="/favorites" className="text-gray-700 hover:text-primary-600 py-2" onClick={() => setMobileMenuOpen(false)}>
                   Favorites
                 </Link>
-                <Link to="/messages" className="text-gray-700 hover:text-primary-600 py-2" onClick={() => setMobileMenuOpen(false)}>
-                  Messages
-                </Link>
+                <div onClick={() => setMobileMenuOpen(false)}>
+                  <MessageNotification />
+                </div>
                 {isAdmin && (
                   <Link to="/admin" className="text-gray-700 hover:text-primary-600 py-2" onClick={() => setMobileMenuOpen(false)}>
                     Admin Dashboard

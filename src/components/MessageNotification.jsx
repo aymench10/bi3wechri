@@ -37,14 +37,14 @@ const MessageNotification = () => {
 
   const fetchUnreadCount = async () => {
     try {
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('messages')
-        .select('id', { count: 'exact', head: true })
+        .select('*', { count: 'exact', head: true })
         .eq('receiver_id', user.id)
         .eq('is_read', false)
 
       if (error) throw error
-      setUnreadCount(data || 0)
+      setUnreadCount(count || 0)
     } catch (error) {
       console.error('Error fetching unread count:', error)
     }
