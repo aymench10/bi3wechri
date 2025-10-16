@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { Send, X, Loader } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { playMessageNotificationSound } from '../lib/notificationSound'
 
 const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
   const { user } = useAuth()
@@ -43,6 +44,12 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
                    Math.abs(new Date(msg.created_at) - new Date(newMsg.created_at)) < 2000)
                 )
                 if (exists) return prev
+                
+                // Play notification sound for incoming messages only
+                if (newMsg.sender_id === otherUserId) {
+                  playMessageNotificationSound()
+                }
+                
                 return [...prev, newMsg]
               })
               

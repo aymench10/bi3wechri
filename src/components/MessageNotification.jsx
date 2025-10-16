@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { MessageCircle } from 'lucide-react'
+import { playMessageNotificationSound } from '../lib/notificationSound'
 
 const MessageNotification = () => {
   const { user } = useAuth()
   const [unreadCount, setUnreadCount] = useState(0)
+  const prevUnreadCountRef = useRef(0)
 
   useEffect(() => {
     if (user) {
@@ -44,7 +46,16 @@ const MessageNotification = () => {
         .eq('is_read', false)
 
       if (error) throw error
-      setUnreadCount(count || 0)
+      
+      const newCount = count || 0
+      
+      // Play notification sound only if count increased
+      if (newCount > prevUnreadCountRef.current && prevUnreadCountRef.current >= 0) {
+        playMessageNotificationSound()
+      }
+      
+      prevUnreadCountRef.current = newCount
+      setUnreadCount(newCount)
     } catch (error) {
       console.error('Error fetching unread count:', error)
     }

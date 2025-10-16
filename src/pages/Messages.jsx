@@ -17,7 +17,7 @@ const Messages = () => {
     if (user?.id) {
       fetchConversations()
       
-      // Subscribe to new messages
+      // Subscribe to new messages (both received and sent)
       const subscription = supabase
         .channel('messages_updates')
         .on(
@@ -27,6 +27,18 @@ const Messages = () => {
             schema: 'public',
             table: 'messages',
             filter: `receiver_id=eq.${user.id}`
+          },
+          () => {
+            fetchConversations()
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'messages',
+            filter: `sender_id=eq.${user.id}`
           },
           () => {
             fetchConversations()
