@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import AdCard from '../components/AdCard'
 import FeaturedCategories from '../components/FeaturedCategories'
 import Pagination from '../components/Pagination'
+import DebugSupabase from '../components/DebugSupabase'
 import { MapPin } from 'lucide-react'
 
 const CATEGORIES = [
@@ -112,6 +113,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <DebugSupabase />
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-blue-600 via-primary-600 to-primary-800 text-white py-20 overflow-hidden">
         {/* Background Pattern */}
