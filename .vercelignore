@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+
+# Testing
+coverage
+*.test.js
+*.test.jsx
+*.spec.js
+*.spec.jsx
+
+# Development files
+.vscode
+.idea
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test files
+test-*.js
+create-test-user.js
+
+# Database files
+*.sql
+supabase_migrations
+
+# Environment files (handled by Vercel)
+.env
+.env.local
+.env.production
+.env.example
+
+# Build files (will be rebuilt)
+dist
+dist-ssr
+
+# Git
+.git
+.gitignore
+
+# Documentation (optional, comment out if you want to include)
+# README.md
+# DEPLOYMENT.md
+# LICENSE
