@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import AdCard from '../components/AdCard'
 import FeaturedCategories from '../components/FeaturedCategories'
+import CategoryDiscovery from '../components/CategoryDiscovery'
 import Pagination from '../components/Pagination'
 import { MapPin } from 'lucide-react'
 
@@ -153,6 +154,9 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Category Discovery Section */}
+      <CategoryDiscovery onCategoryClick={handleCategoryClick} />
+
       {/* Featured Categories */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <FeaturedCategories onCategoryClick={handleCategoryClick} />
@@ -178,7 +182,7 @@ const Home = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div id="ads-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Ads Grid */}
         <div className="w-full">
             {loading ? (

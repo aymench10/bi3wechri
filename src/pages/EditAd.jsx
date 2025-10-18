@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import { Upload, X } from 'lucide-react'
 
 const CATEGORIES = [
-  'Electronics',
+  'Informatique et Multimedia',
   'Vehicles',
   'Real Estate',
   'Furniture',
