@@ -165,14 +165,14 @@ const Messages = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-2">
-            <MessageCircle className="text-primary-600" size={32} />
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center space-x-2">
+            <MessageCircle className="text-primary-600" size={28} />
             <span>Messages</span>
           </h1>
-          <p className="text-gray-600 mt-2">Your conversations with buyers and sellers</p>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">Your conversations with buyers and sellers</p>
         </div>
 
         {conversations.length === 0 ? (
@@ -197,21 +197,21 @@ const Messages = () => {
                   } ${conversation.unread_count > 0 ? 'bg-blue-50' : ''}`}
                   onClick={() => openChat(conversation)}
                 >
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-3 sm:space-x-4">
                     {/* Ad Image */}
                     <img
                       src={adImage}
                       alt={conversation.ad_title}
-                      className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0"
                     />
                     
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-1">
-                        <h3 className="font-semibold text-gray-900 truncate">
+                        <h3 className="text-sm sm:text-base font-semibold text-gray-900 truncate">
                           {otherUser?.full_name || 'User'}
                         </h3>
-                        <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
+                        <span className="text-xs text-gray-500 ml-2 flex-shrink-0 hidden sm:inline">
                           {formatDistanceToNow(new Date(conversation.last_message_at), {
                             addSuffix: true
                           })}

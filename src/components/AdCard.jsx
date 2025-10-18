@@ -32,32 +32,32 @@ const AdCard = ({ ad }) => {
       </div>
 
       {/* Content */}
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         {/* Title */}
-        <h3 className="font-bold text-lg mb-3 line-clamp-2 text-gray-900 group-hover:text-primary-600 transition-colors">
+        <h3 className="font-bold text-base sm:text-lg mb-2 sm:mb-3 line-clamp-2 text-gray-900 group-hover:text-primary-600 transition-colors">
           {ad.title}
         </h3>
 
         {/* Price */}
-        <div className="mb-4">
-          <p className="text-3xl font-extrabold bg-gradient-to-r from-primary-600 to-blue-600 bg-clip-text text-transparent">
+        <div className="mb-3 sm:mb-4">
+          <p className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-primary-600 to-blue-600 bg-clip-text text-transparent">
             {ad.price.toLocaleString()} TND
           </p>
         </div>
 
         {/* Location & Time */}
-        <div className="space-y-2">
-          <div className="flex items-center text-sm text-gray-600">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 mr-2">
-              <MapPin size={16} className="text-gray-600" />
+        <div className="space-y-1.5 sm:space-y-2">
+          <div className="flex items-center text-xs sm:text-sm text-gray-600">
+            <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100 mr-2">
+              <MapPin size={14} className="sm:w-4 sm:h-4 text-gray-600" />
             </div>
-            <span className="font-medium">{ad.location}</span>
+            <span className="font-medium truncate">{ad.location}</span>
           </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 mr-2">
-              <Calendar size={16} className="text-gray-500" />
+          <div className="flex items-center text-xs sm:text-sm text-gray-500">
+            <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100 mr-2">
+              <Calendar size={14} className="sm:w-4 sm:h-4 text-gray-500" />
             </div>
-            <span>{formatDistanceToNow(new Date(ad.created_at), { addSuffix: true })}</span>
+            <span className="truncate">{formatDistanceToNow(new Date(ad.created_at), { addSuffix: true })}</span>
           </div>
         </div>
       </div>

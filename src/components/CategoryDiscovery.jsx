@@ -58,28 +58,29 @@ const CategoryDiscovery = ({ onCategoryClick }) => {
   }
 
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white py-16">
+    <div className="bg-gradient-to-b from-gray-50 to-white py-8 sm:py-12 md:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="text-3xl font-bold text-gray-900">
+        <div className="flex items-center justify-between mb-6 sm:mb-8 md:mb-10">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
             Découvrez notre univers
           </h2>
           <button 
             onClick={() => handleCategoryClick('All')}
-            className="flex items-center text-primary-600 hover:text-primary-700 font-semibold transition-colors group"
+            className="flex items-center text-primary-600 hover:text-primary-700 text-sm sm:text-base font-semibold transition-colors group"
           >
-            Afficher plus
-            <ChevronRight size={20} className="ml-1 group-hover:translate-x-1 transition-transform" />
+            <span className="hidden sm:inline">Afficher plus</span>
+            <span className="sm:hidden">Plus</span>
+            <ChevronRight size={18} className="ml-1 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
 
         {/* Category Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {CATEGORY_SECTIONS.map((section, sectionIdx) => (
-            <div key={sectionIdx} className="space-y-4">
+            <div key={sectionIdx} className="space-y-3 sm:space-y-4">
               {/* Section Title */}
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
                 {section.title}
               </h3>
               
@@ -102,8 +103,8 @@ const CategoryDiscovery = ({ onCategoryClick }) => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                     
                     {/* Text */}
-                    <div className="absolute inset-0 flex items-end p-3">
-                      <span className="text-white font-semibold text-sm leading-tight drop-shadow-lg">
+                    <div className="absolute inset-0 flex items-end p-2 sm:p-3">
+                      <span className="text-white font-semibold text-xs sm:text-sm leading-tight drop-shadow-lg">
                         {category.name}
                       </span>
                     </div>

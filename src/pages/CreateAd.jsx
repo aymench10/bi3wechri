@@ -221,22 +221,22 @@ const CreateAd = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Ad</h1>
-          <p className="text-gray-600">Follow the steps to create your ad</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Create New Ad</h1>
+          <p className="text-sm sm:text-base text-gray-600">Follow the steps to create your ad</p>
         </div>
 
         {/* Progress Steps */}
-        <div className="card p-6 mb-8">
+        <div className="card p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => (
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center font-semibold transition-colors ${
+                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-semibold transition-colors ${
                       currentStep > step.number
                         ? 'bg-green-600 text-white'
                         : currentStep === step.number
@@ -245,22 +245,23 @@ const CreateAd = () => {
                     }`}
                   >
                     {currentStep > step.number ? (
-                      <Check size={24} />
+                      <Check size={20} className="sm:w-6 sm:h-6" />
                     ) : (
-                      <step.icon size={24} />
+                      <step.icon size={20} className="sm:w-6 sm:h-6" />
                     )}
                   </div>
-                  <div className="mt-2 text-center">
-                    <div className={`text-sm font-medium ${
+                  <div className="mt-1 sm:mt-2 text-center">
+                    <div className={`text-xs sm:text-sm font-medium ${
                       currentStep >= step.number ? 'text-gray-900' : 'text-gray-500'
                     }`}>
-                      {step.title}
+                      <span className="hidden sm:inline">{step.title}</span>
+                      <span className="sm:hidden">{step.number}</span>
                     </div>
                   </div>
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`h-1 flex-1 mx-4 transition-colors ${
+                    className={`h-1 flex-1 mx-2 sm:mx-4 transition-colors ${
                       currentStep > step.number ? 'bg-green-600' : 'bg-gray-200'
                     }`}
                   />

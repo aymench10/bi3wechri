@@ -90,14 +90,14 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t space-y-4">
+          <div className="md:hidden py-4 border-t space-y-3">
             {/* Mobile Search */}
-            <div className="mb-4">
+            <div className="mb-3">
               <SearchAutocomplete onSearch={handleSearch} />
             </div>
 
             {user ? (
-              <div className="flex flex-col space-y-3">
+              <div className="flex flex-col space-y-2">
                 <Link to="/create-ad" className="btn-primary flex items-center justify-center space-x-2" onClick={() => setMobileMenuOpen(false)}>
                   <Plus size={20} />
                   <span>Post Ad</span>
