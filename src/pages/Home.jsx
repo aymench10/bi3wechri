@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import AdCard from '../components/AdCard'
 import FeaturedCategories from '../components/FeaturedCategories'
 import CategoryDiscovery from '../components/CategoryDiscovery'
+import PromoBanner from '../components/PromoBanner'
 import Pagination from '../components/Pagination'
 import { MapPin } from 'lucide-react'
 
@@ -156,6 +157,11 @@ const Home = () => {
 
       {/* Category Discovery Section */}
       <CategoryDiscovery onCategoryClick={handleCategoryClick} />
+
+      {/* Promotional Banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <PromoBanner />
+      </div>
 
       {/* Featured Categories */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
