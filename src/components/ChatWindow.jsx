@@ -17,13 +17,23 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
   const channelRef = useRef(null)
 
   useEffect(() => {
-    if (adId && otherUserId) {
+    if (adId && otherUserId && user?.id) {
       fetchMessages()
       markMessagesAsRead()
       
-      // Create and store channel reference
+      // Create and store channel reference with unique name for this conversation
       const channelName = `chat:${adId}:${Math.min(user.id, otherUserId)}:${Math.max(user.id, otherUserId)}`
-      channelRef.current = supabase.channel(channelName)
+      
+      // Remove old channel if exists
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current)
+      }
+      
+      channelRef.current = supabase.channel(channelName, {
+        config: {
+          broadcast: { self: false }
+        }
+      })
       
       // Subscribe to new messages and typing status
       channelRef.current
@@ -36,6 +46,7 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
             filter: `ad_id=eq.${adId}`
           },
           (payload) => {
+            console.log('New message received:', payload)
             const newMsg = payload.new
             if (
               (newMsg.sender_id === user.id && newMsg.receiver_id === otherUserId) ||
@@ -66,6 +77,7 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
           }
         )
         .on('broadcast', { event: 'typing' }, (payload) => {
+          console.log('Typing event received:', payload)
           if (payload.payload.userId === otherUserId) {
             setIsOtherUserTyping(payload.payload.isTyping)
             
@@ -75,15 +87,18 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
             }
           }
         })
-        .subscribe()
+        .subscribe((status) => {
+          console.log('Channel subscription status:', status)
+        })
 
       return () => {
         if (channelRef.current) {
-          channelRef.current.unsubscribe()
+          supabase.removeChannel(channelRef.current)
+          channelRef.current = null
         }
       }
     }
-  }, [adId, otherUserId, user.id])
+  }, [adId, otherUserId, user?.id])
 
   useEffect(() => {
     scrollToBottom()
@@ -211,6 +226,8 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
         .single()
 
       if (error) throw error
+      
+      console.log('Message sent successfully:', data)
       
       // Replace temp message with real one
       setMessages(prev => 
