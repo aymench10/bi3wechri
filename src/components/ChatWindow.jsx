@@ -14,15 +14,19 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
   const [isOtherUserTyping, setIsOtherUserTyping] = useState(false)
   const messagesEndRef = useRef(null)
   const typingTimeoutRef = useRef(null)
+  const channelRef = useRef(null)
 
   useEffect(() => {
     if (adId && otherUserId) {
       fetchMessages()
       markMessagesAsRead()
       
+      // Create and store channel reference
+      const channelName = `chat:${adId}:${Math.min(user.id, otherUserId)}:${Math.max(user.id, otherUserId)}`
+      channelRef.current = supabase.channel(channelName)
+      
       // Subscribe to new messages and typing status
-      const subscription = supabase
-        .channel(`chat:${adId}:${user.id}:${otherUserId}`)
+      channelRef.current
         .on(
           'postgres_changes',
           {
@@ -62,7 +66,7 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
           }
         )
         .on('broadcast', { event: 'typing' }, (payload) => {
-          if (payload.payload.userId === otherUserId && payload.payload.adId === adId) {
+          if (payload.payload.userId === otherUserId) {
             setIsOtherUserTyping(payload.payload.isTyping)
             
             // Auto-hide typing indicator after 3 seconds
@@ -74,14 +78,16 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
         .subscribe()
 
       return () => {
-        subscription.unsubscribe()
+        if (channelRef.current) {
+          channelRef.current.unsubscribe()
+        }
       }
     }
   }, [adId, otherUserId, user.id])
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages, isOtherUserTyping])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -135,40 +141,44 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
   const handleTyping = (e) => {
     setNewMessage(e.target.value)
     
-    // Send typing indicator
-    const channel = supabase.channel(`chat:${adId}:${user.id}:${otherUserId}`)
-    channel.send({
-      type: 'broadcast',
-      event: 'typing',
-      payload: { userId: user.id, adId, isTyping: e.target.value.length > 0 }
-    })
-    
-    // Clear previous timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current)
-    }
-    
-    // Stop typing indicator after 1 second of no typing
-    typingTimeoutRef.current = setTimeout(() => {
-      channel.send({
+    // Send typing indicator using stored channel
+    if (channelRef.current) {
+      channelRef.current.send({
         type: 'broadcast',
         event: 'typing',
-        payload: { userId: user.id, adId, isTyping: false }
+        payload: { userId: user.id, isTyping: e.target.value.length > 0 }
       })
-    }, 1000)
+      
+      // Clear previous timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current)
+      }
+      
+      // Stop typing indicator after 1 second of no typing
+      typingTimeoutRef.current = setTimeout(() => {
+        if (channelRef.current) {
+          channelRef.current.send({
+            type: 'broadcast',
+            event: 'typing',
+            payload: { userId: user.id, isTyping: false }
+          })
+        }
+      }, 1000)
+    }
   }
 
   const sendMessage = async (e) => {
     e.preventDefault()
     if (!newMessage.trim() || sending) return
 
-    // Stop typing indicator
-    const channel = supabase.channel(`chat:${adId}:${user.id}:${otherUserId}`)
-    channel.send({
-      type: 'broadcast',
-      event: 'typing',
-      payload: { userId: user.id, adId, isTyping: false }
-    })
+    // Stop typing indicator using stored channel
+    if (channelRef.current) {
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'typing',
+        payload: { userId: user.id, isTyping: false }
+      })
+    }
 
     const messageContent = newMessage.trim()
     const tempId = `temp-${Date.now()}`
