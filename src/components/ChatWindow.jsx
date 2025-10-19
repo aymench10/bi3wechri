@@ -223,7 +223,14 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
       <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-3 sm:p-4 sm:rounded-t-2xl flex justify-between items-center">
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold truncate">{otherUserName}</h3>
-          <p className="text-xs text-blue-100 truncate">{adTitle}</p>
+          {isOtherUserTyping ? (
+            <p className="text-xs text-green-300 flex items-center space-x-1">
+              <span className="inline-block w-1 h-1 bg-green-300 rounded-full animate-pulse"></span>
+              <span className="font-medium">typing...</span>
+            </p>
+          ) : (
+            <p className="text-xs text-blue-100 truncate">{adTitle}</p>
+          )}
         </div>
         <button
           onClick={onClose}
