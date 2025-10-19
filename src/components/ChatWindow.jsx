@@ -11,14 +11,16 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [isOtherUserTyping, setIsOtherUserTyping] = useState(false)
   const messagesEndRef = useRef(null)
+  const typingTimeoutRef = useRef(null)
 
   useEffect(() => {
     if (adId && otherUserId) {
       fetchMessages()
       markMessagesAsRead()
       
-      // Subscribe to new messages
+      // Subscribe to new messages and typing status
       const subscription = supabase
         .channel(`chat:${adId}:${user.id}:${otherUserId}`)
         .on(
@@ -59,6 +61,16 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
             }
           }
         )
+        .on('broadcast', { event: 'typing' }, (payload) => {
+          if (payload.payload.userId === otherUserId && payload.payload.adId === adId) {
+            setIsOtherUserTyping(payload.payload.isTyping)
+            
+            // Auto-hide typing indicator after 3 seconds
+            if (payload.payload.isTyping) {
+              setTimeout(() => setIsOtherUserTyping(false), 3000)
+            }
+          }
+        })
         .subscribe()
 
       return () => {
@@ -120,9 +132,43 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
     }
   }
 
+  const handleTyping = (e) => {
+    setNewMessage(e.target.value)
+    
+    // Send typing indicator
+    const channel = supabase.channel(`chat:${adId}:${user.id}:${otherUserId}`)
+    channel.send({
+      type: 'broadcast',
+      event: 'typing',
+      payload: { userId: user.id, adId, isTyping: e.target.value.length > 0 }
+    })
+    
+    // Clear previous timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current)
+    }
+    
+    // Stop typing indicator after 1 second of no typing
+    typingTimeoutRef.current = setTimeout(() => {
+      channel.send({
+        type: 'broadcast',
+        event: 'typing',
+        payload: { userId: user.id, adId, isTyping: false }
+      })
+    }, 1000)
+  }
+
   const sendMessage = async (e) => {
     e.preventDefault()
     if (!newMessage.trim() || sending) return
+
+    // Stop typing indicator
+    const channel = supabase.channel(`chat:${adId}:${user.id}:${otherUserId}`)
+    channel.send({
+      type: 'broadcast',
+      event: 'typing',
+      payload: { userId: user.id, adId, isTyping: false }
+    })
 
     const messageContent = newMessage.trim()
     const tempId = `temp-${Date.now()}`
@@ -228,6 +274,20 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
             )
           })
         )}
+        
+        {/* Typing Indicator */}
+        {isOtherUserTyping && (
+          <div className="flex justify-start">
+            <div className="bg-white text-gray-900 rounded-2xl rounded-bl-sm shadow-sm px-4 py-3">
+              <div className="flex space-x-1.5">
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div ref={messagesEndRef} />
       </div>
 
@@ -237,7 +297,7 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
           <input
             type="text"
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={handleTyping}
             placeholder="Type a message..."
             className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             disabled={sending}
