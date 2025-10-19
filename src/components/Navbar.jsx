@@ -23,12 +23,12 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 gap-6">
+        <div className="flex justify-between items-center h-16 gap-4 lg:gap-6">
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0">
-            <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-3 py-2 rounded-lg font-bold text-xl shadow-md hover:shadow-lg transition-shadow">
+          <Link to="/" className="flex-shrink-0 group">
+            <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-2 rounded-xl font-bold text-lg sm:text-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
               Bi3wEchri
             </div>
           </Link>
@@ -39,42 +39,42 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-3 flex-shrink-0">
             {user ? (
               <>
-                <Link to="/create-ad" className="btn-primary flex items-center space-x-2">
-                  <Plus size={20} />
-                  <span>Post Ad</span>
+                <Link to="/create-ad" className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 hover:shadow-md transition-all duration-300 hover:scale-105">
+                  <Plus size={18} />
+                  <span className="hidden lg:inline">Post Ad</span>
                 </Link>
-                <Link to="/my-ads" className="text-gray-700 hover:text-primary-600 flex items-center space-x-1">
-                  <List size={20} />
-                  <span>My Ads</span>
+                <Link to="/my-ads" className="text-gray-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5">
+                  <List size={18} />
+                  <span className="hidden lg:inline font-medium">My Ads</span>
                 </Link>
-                <Link to="/favorites" className="text-gray-700 hover:text-primary-600 flex items-center space-x-1">
-                  <Heart size={20} />
-                  <span>Favorites</span>
+                <Link to="/favorites" className="text-gray-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5">
+                  <Heart size={18} />
+                  <span className="hidden lg:inline font-medium">Favorites</span>
                 </Link>
                 <MessageNotification />
                 <NotificationBell />
                 {isAdmin && (
-                  <Link to="/admin" className="text-gray-700 hover:text-primary-600 flex items-center space-x-1">
-                    <LayoutDashboard size={20} />
-                    <span>Admin</span>
+                  <Link to="/admin" className="text-gray-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5">
+                    <LayoutDashboard size={18} />
+                    <span className="hidden lg:inline font-medium">Admin</span>
                   </Link>
                 )}
-                <Link to={`/profile/${user.id}`} className="text-gray-700 hover:text-primary-600 flex items-center space-x-1">
-                  <User size={20} />
-                  <span>{profile?.full_name || 'Profile'}</span>
+                <Link to={`/profile/${user.id}`} className="text-gray-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5">
+                  <User size={18} />
+                  <span className="hidden xl:inline font-medium">{profile?.full_name || 'Profile'}</span>
                 </Link>
-                <button onClick={handleSignOut} className="text-gray-700 hover:text-red-600 flex items-center space-x-1">
-                  <LogOut size={20} />
-                  <span>Logout</span>
+                <button onClick={handleSignOut} className="text-gray-600 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5">
+                  <LogOut size={18} />
+                  <span className="hidden lg:inline font-medium">Logout</span>
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="text-gray-700 hover:text-primary-600">Login</Link>
-                <Link to="/signup" className="btn-primary">Sign Up</Link>
+                <Link to="/login" className="text-gray-600 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg transition-all duration-200 font-medium">Login</Link>
+                <Link to="/signup" className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-2 rounded-lg font-medium hover:shadow-md transition-all duration-300 hover:scale-105">Sign Up</Link>
               </>
             )}
           </div>
@@ -82,9 +82,9 @@ const Navbar = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
