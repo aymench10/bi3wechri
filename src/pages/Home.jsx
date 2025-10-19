@@ -6,13 +6,14 @@ import FeaturedCategories from '../components/FeaturedCategories'
 import CategoryDiscovery from '../components/CategoryDiscovery'
 import PromoBanner from '../components/PromoBanner'
 import Pagination from '../components/Pagination'
+import ImageSlider from '../components/ImageSlider'
 import { MapPin } from 'lucide-react'
 
 const CATEGORIES = [
   'All',
   'Informatique et Multimedia',
   'Vehicles',
-  'Real Estate',
+  'Immobilier',
   'Furniture',
   'Fashion',
   'Jobs',
@@ -154,6 +155,9 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {/* Image Slider */}
+      <ImageSlider />
 
       {/* Category Discovery Section */}
       <CategoryDiscovery onCategoryClick={handleCategoryClick} />

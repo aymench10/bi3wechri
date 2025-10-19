@@ -7,7 +7,7 @@ import { Upload, X, ChevronLeft, ChevronRight, Check, FileText, Image, MapPin, D
 const CATEGORIES = [
   'Informatique et Multimedia',
   'Vehicles',
-  'Real Estate',
+  'Immobilier',
   'Furniture',
   'Fashion',
   'Jobs',

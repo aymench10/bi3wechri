@@ -13,7 +13,7 @@ const CATEGORY_SECTIONS = [
   },
   {
     title: 'Immobilier',
-    categoryKey: 'Real Estate',
+    categoryKey: 'Immobilier',
     categories: [
       { name: 'Maison et Villa', image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=300&fit=crop' },
       { name: 'Magasins', image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop' },

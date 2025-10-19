@@ -7,7 +7,7 @@ import { Upload, X } from 'lucide-react'
 const CATEGORIES = [
   'Electronics',
   'Vehicles',
-  'Real Estate',
+  'Immobilier',
   'Furniture',
   'Fashion',
   'Jobs',
