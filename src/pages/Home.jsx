@@ -24,15 +24,29 @@ const CATEGORIES = [
 const LOCATIONS = [
   'All',
   'Tunis',
-  'Sfax',
-  'Sousse',
-  'Kairouan',
-  'Bizerte',
-  'Gabès',
   'Ariana',
-  'Gafsa',
+  'Ben Arous',
+  'Manouba',
+  'Nabeul',
+  'Zaghouan',
+  'Bizerte',
+  'Béja',
+  'Jendouba',
+  'Kef',
+  'Siliana',
+  'Sousse',
   'Monastir',
-  'Ben Arous'
+  'Mahdia',
+  'Sfax',
+  'Kairouan',
+  'Kasserine',
+  'Sidi Bouzid',
+  'Gabès',
+  'Medenine',
+  'Tataouine',
+  'Gafsa',
+  'Tozeur',
+  'Kébili'
 ]
 
 const Home = () => {
