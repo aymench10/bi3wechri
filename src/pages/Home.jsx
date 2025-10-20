@@ -57,6 +57,7 @@ const Home = () => {
   const [selectedLocation, setSelectedLocation] = useState('All')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalAds, setTotalAds] = useState(0)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
   const adsPerPage = 12
 
   const searchQuery = searchParams.get('search') || ''
@@ -108,7 +109,18 @@ const Home = () => {
 
       if (error) throw error
       setAds(data || [])
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      
+      // Scroll to ads section only if not initial load
+      if (!isInitialLoad) {
+        setTimeout(() => {
+          const adsSection = document.getElementById('ads-section')
+          if (adsSection) {
+            adsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }, 100)
+      } else {
+        setIsInitialLoad(false)
+      }
     } catch (error) {
       console.error('Error fetching ads:', error)
     } finally {

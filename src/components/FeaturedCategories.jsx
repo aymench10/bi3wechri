@@ -86,6 +86,12 @@ const CATEGORIES = [
 ]
 
 const FeaturedCategories = ({ onCategoryClick }) => {
+  const handleCategoryClick = (categoryName) => {
+    if (onCategoryClick) {
+      onCategoryClick(categoryName)
+    }
+  }
+
   return (
     <div className="py-8 sm:py-10 md:py-12 bg-gradient-to-br from-white via-gray-50 to-white rounded-3xl shadow-lg border border-gray-100">
       {/* Header with Icon */}
@@ -108,7 +114,7 @@ const FeaturedCategories = ({ onCategoryClick }) => {
           return (
             <button
               key={category.name}
-              onClick={() => onCategoryClick(category.name)}
+              onClick={() => handleCategoryClick(category.name)}
               className="group relative flex flex-col items-center p-4 sm:p-5 lg:p-6 rounded-2xl transition-all duration-500 bg-white border-2 border-gray-100 hover:border-transparent hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
             >
               {/* Gradient Background on Hover */}
