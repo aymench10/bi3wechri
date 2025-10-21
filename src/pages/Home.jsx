@@ -58,6 +58,7 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalAds, setTotalAds] = useState(0)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
+  const [previousSearchQuery, setPreviousSearchQuery] = useState('')
   const adsPerPage = 12
 
   const searchQuery = searchParams.get('search') || ''
@@ -110,16 +111,25 @@ const Home = () => {
       if (error) throw error
       setAds(data || [])
       
-      // Scroll to ads section only if not initial load
-      if (!isInitialLoad) {
+      // Detect if search query changed
+      const searchQueryChanged = searchQuery !== previousSearchQuery
+      
+      // Scroll to ads section if not initial load OR if search query changed
+      if (!isInitialLoad || searchQueryChanged) {
         setTimeout(() => {
           const adsSection = document.getElementById('ads-section')
           if (adsSection) {
             adsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }
         }, 100)
-      } else {
+      }
+      
+      // Update states
+      if (isInitialLoad) {
         setIsInitialLoad(false)
+      }
+      if (searchQueryChanged) {
+        setPreviousSearchQuery(searchQuery)
       }
     } catch (error) {
       console.error('Error fetching ads:', error)
