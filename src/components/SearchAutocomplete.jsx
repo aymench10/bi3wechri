@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Search, Clock, TrendingUp, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 const SearchAutocomplete = ({ onSearch, initialValue = '' }) => {
+  const navigate = useNavigate()
   const [query, setQuery] = useState(initialValue)
   const [suggestions, setSuggestions] = useState([])
   const [recentSearches, setRecentSearches] = useState([])
@@ -43,16 +45,14 @@ const SearchAutocomplete = ({ onSearch, initialValue = '' }) => {
       setLoading(true)
       const { data, error } = await supabase
         .from('ads')
-        .select('title')
+        .select('id, title, price, images')
         .eq('status', 'active')
         .ilike('title', `%${query}%`)
         .limit(5)
 
       if (error) throw error
 
-      // Extract unique titles
-      const uniqueTitles = [...new Set(data.map(ad => ad.title))]
-      setSuggestions(uniqueTitles)
+      setSuggestions(data || [])
     } catch (error) {
       console.error('Error fetching suggestions:', error)
     } finally {
@@ -79,8 +79,15 @@ const SearchAutocomplete = ({ onSearch, initialValue = '' }) => {
   }
 
   const handleSuggestionClick = (suggestion) => {
-    setQuery(suggestion)
-    handleSearch(suggestion)
+    if (typeof suggestion === 'string') {
+      // Recent search - just search
+      setQuery(suggestion)
+      handleSearch(suggestion)
+    } else {
+      // Ad object - navigate to ad detail
+      setShowSuggestions(false)
+      navigate(`/ad/${suggestion.id}`)
+    }
   }
 
   const clearRecentSearch = (searchToRemove) => {
@@ -133,16 +140,28 @@ const SearchAutocomplete = ({ onSearch, initialValue = '' }) => {
           {!loading && suggestions.length > 0 && (
             <div className="py-2">
               <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
-                Suggestions
+                Ads Found
               </div>
-              {suggestions.map((suggestion, index) => (
+              {suggestions.map((suggestion) => (
                 <button
-                  key={index}
+                  key={suggestion.id}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 transition-colors"
+                  className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3 transition-colors border-b border-gray-100 last:border-0"
                 >
-                  <Search size={16} className="text-gray-400" />
-                  <span className="text-gray-900">{suggestion}</span>
+                  {/* Ad Image */}
+                  {suggestion.images && suggestion.images[0] && (
+                    <img
+                      src={suggestion.images[0]}
+                      alt={suggestion.title}
+                      className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                    />
+                  )}
+                  {/* Ad Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-gray-900 font-medium truncate">{suggestion.title}</p>
+                    <p className="text-primary-600 font-semibold text-sm">{suggestion.price} TND</p>
+                  </div>
+                  <Search size={16} className="text-gray-400 flex-shrink-0" />
                 </button>
               ))}
             </div>

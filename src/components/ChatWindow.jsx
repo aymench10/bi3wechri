@@ -326,18 +326,35 @@ const ChatWindow = ({ adId, otherUserId, otherUserName, adTitle, onClose }) => {
       </div>
 
       {/* Input */}
-      <form onSubmit={sendMessage} className="p-3 sm:p-4 border-t bg-white sm:rounded-b-2xl">
+      <form 
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          sendMessage(e)
+        }} 
+        className="p-3 sm:p-4 border-t bg-white sm:rounded-b-2xl"
+      >
         <div className="flex space-x-2">
           <input
             type="text"
             value={newMessage}
             onChange={handleTyping}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                if (newMessage.trim() && !sending) {
+                  sendMessage(e)
+                }
+              }
+            }}
             placeholder="Type a message..."
             className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             disabled={sending}
+            autoComplete="off"
           />
           <button
-            type="submit"
+            type="button"
+            onClick={sendMessage}
             disabled={!newMessage.trim() || sending}
             className="bg-primary-600 text-white p-2 rounded-full hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           >
