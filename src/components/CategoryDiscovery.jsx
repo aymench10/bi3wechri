@@ -48,13 +48,6 @@ const CategoryDiscovery = ({ onCategoryClick }) => {
     if (onCategoryClick) {
       onCategoryClick(categoryKey)
     }
-    // Scroll to ads section
-    setTimeout(() => {
-      const adsSection = document.getElementById('ads-section')
-      if (adsSection) {
-        adsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    }, 100)
   }
 
   return (
