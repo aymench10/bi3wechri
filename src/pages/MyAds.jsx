@@ -41,39 +41,42 @@ const MyAds = () => {
 
   const getStatusBadge = (status) => {
     const styles = {
-      active: 'bg-green-100 text-green-800',
-      pending: 'bg-yellow-100 text-yellow-800',
-      rejected: 'bg-red-100 text-red-800'
+      active: 'bg-green-100 text-green-800 border border-green-200',
+      pending: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
+      rejected: 'bg-red-100 text-red-800 border border-red-200'
     }
     return (
-      <span className={`inline-block px-2 py-1 text-xs font-medium rounded ${styles[status]}`}>
+      <span className={`inline-block px-3 py-1.5 text-xs font-bold rounded-full ${styles[status]}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Ads</h1>
-          <Link to="/create-ad" className="btn-primary flex items-center space-x-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div>
+            <h1 className="section-heading">My Ads</h1>
+            <p className="text-gray-600 font-medium">Manage and track all your listings</p>
+          </div>
+          <Link to="/create-ad" className="btn-primary flex items-center space-x-2 whitespace-nowrap">
             <Plus size={20} />
             <span>Create New Ad</span>
           </Link>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="card mb-6">
-          <div className="flex space-x-1 p-2">
+        {/* Filter Tabs - Modern Style */}
+        <div className="card mb-8 p-1.5 bg-gradient-to-r from-gray-50 to-white">
+          <div className="flex flex-wrap gap-2">
             {['all', 'active', 'pending', 'rejected'].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+                className={`py-2.5 px-4 rounded-lg font-bold transition-all duration-300 text-sm sm:text-base ${
                   filter === status
-                    ? 'bg-primary-600 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
                 }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -84,12 +87,15 @@ const MyAds = () => {
 
         {/* Ads Grid */}
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="flex flex-col justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-200 border-t-primary-600 mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading your ads...</p>
           </div>
         ) : ads.length === 0 ? (
-          <div className="card p-12 text-center">
-            <p className="text-gray-500 text-lg mb-4">No ads found</p>
+          <div className="card p-12 text-center bg-gradient-to-br from-white to-gray-50">
+            <div className="text-5xl mb-4">📋</div>
+            <p className="text-gray-600 text-lg font-medium mb-4">No ads found</p>
+            <p className="text-gray-500 mb-6">Start by creating your first ad to get started</p>
             <Link to="/create-ad" className="btn-primary inline-flex items-center space-x-2">
               <Plus size={20} />
               <span>Create Your First Ad</span>

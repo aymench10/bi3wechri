@@ -10,10 +10,10 @@ const AdCard = ({ ad }) => {
   return (
     <Link 
       to={`/ads/${ad.id}`} 
-      className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
+      className="group card hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full"
     >
       {/* Image Container */}
-      <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+      <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300">
         <img 
           src={imageUrl} 
           alt={ad.title}
@@ -22,9 +22,9 @@ const AdCard = ({ ad }) => {
             e.target.src = 'https://via.placeholder.com/400x300?text=No+Image'
           }}
         />
-        {/* Category Badge */}
+        {/* Category Badge - Premium Style */}
         <div className="absolute top-3 left-3">
-          <span className="inline-flex items-center space-x-1 bg-white/95 backdrop-blur-sm text-gray-800 text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg">
+          <span className="inline-flex items-center space-x-1 bg-white/95 backdrop-blur-md text-gray-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-white/20 hover:bg-white transition-colors">
             <Tag size={12} />
             <span>{ad.category}</span>
           </span>
@@ -32,30 +32,30 @@ const AdCard = ({ ad }) => {
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-5">
+      <div className="p-4 sm:p-5 flex flex-col flex-1">
         {/* Title */}
         <h3 className="font-bold text-base sm:text-lg mb-2 sm:mb-3 line-clamp-2 text-gray-900 group-hover:text-primary-600 transition-colors">
           {ad.title}
         </h3>
 
-        {/* Price */}
+        {/* Price - Enhanced Gradient */}
         <div className="mb-3 sm:mb-4">
-          <p className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-primary-600 to-blue-600 bg-clip-text text-transparent">
+          <p className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-primary-600 via-primary-500 to-blue-600 bg-clip-text text-transparent">
             {ad.price.toLocaleString()} TND
           </p>
         </div>
 
-        {/* Location & Time */}
-        <div className="space-y-1.5 sm:space-y-2">
-          <div className="flex items-center text-xs sm:text-sm text-gray-600">
-            <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100 mr-2">
-              <MapPin size={14} className="sm:w-4 sm:h-4 text-gray-600" />
+        {/* Location & Time - Improved Layout */}
+        <div className="space-y-2 mt-auto">
+          <div className="flex items-center text-xs sm:text-sm text-gray-600 font-medium">
+            <div className="icon-container-neutral mr-2.5 flex-shrink-0">
+              <MapPin size={14} />
             </div>
-            <span className="font-medium truncate">{ad.location}</span>
+            <span className="truncate">{ad.location}</span>
           </div>
-          <div className="flex items-center text-xs sm:text-sm text-gray-500">
-            <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100 mr-2">
-              <Calendar size={14} className="sm:w-4 sm:h-4 text-gray-500" />
+          <div className="flex items-center text-xs sm:text-sm text-gray-500 font-medium">
+            <div className="icon-container-neutral mr-2.5 flex-shrink-0">
+              <Calendar size={14} />
             </div>
             <span className="truncate">{formatDistanceToNow(new Date(ad.created_at), { addSuffix: true })}</span>
           </div>

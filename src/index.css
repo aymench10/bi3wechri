@@ -31,24 +31,59 @@
 
 /* stylelint-disable at-rule-no-unknown */
 @layer components {
+  /* Primary Button - Modern Gradient with Hover Effects */
   .btn-primary {
-    @apply bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-2 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105 font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none;
   }
   
+  /* Secondary Button - Subtle with Hover */
   .btn-secondary {
-    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium;
+    @apply bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium border border-gray-200;
   }
   
+  /* Danger Button - Red Gradient */
   .btn-danger {
-    @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium;
+    @apply bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105 font-medium;
   }
   
+  /* Input Field - Modern with Better Focus States */
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white text-gray-900 placeholder-gray-500 font-medium;
   }
   
+  /* Card - Modern with Better Shadow and Spacing */
   .card {
-    @apply bg-white rounded-lg shadow-md overflow-hidden;
+    @apply bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300;
+  }
+  
+  /* Badge - Consistent Styling */
+  .badge {
+    @apply inline-flex items-center space-x-1.5 bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-primary-200;
+  }
+  
+  /* Badge Outline - Alternative Style */
+  .badge-outline {
+    @apply inline-flex items-center space-x-1.5 bg-transparent text-primary-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-primary-300;
+  }
+  
+  /* Section Heading - Consistent Typography */
+  .section-heading {
+    @apply text-3xl sm:text-4xl font-bold text-gray-900 mb-2;
+  }
+  
+  /* Section Subheading */
+  .section-subheading {
+    @apply text-lg text-gray-600 mb-6;
+  }
+  
+  /* Icon Container - Consistent Sizing */
+  .icon-container {
+    @apply flex items-center justify-center w-10 h-10 rounded-lg bg-primary-50 text-primary-600;
+  }
+  
+  /* Icon Container - Neutral */
+  .icon-container-neutral {
+    @apply flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 text-gray-600;
   }
 }
 /* stylelint-enable at-rule-no-unknown */
