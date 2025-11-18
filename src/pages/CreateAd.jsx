@@ -235,48 +235,48 @@ const CreateAd = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-8 md:py-10">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Create New Ad</h1>
-          <p className="text-sm sm:text-base text-gray-600">Follow the steps to create your ad</p>
+        <div className="mb-8 sm:mb-10">
+          <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-2">Create New Ad</h1>
+          <p className="text-gray-600 font-medium text-lg">Follow the steps to list your item</p>
         </div>
 
-        {/* Progress Steps */}
-        <div className="card p-4 sm:p-6 mb-6 sm:mb-8">
+        {/* Progress Steps - Modern Design */}
+        <div className="card p-6 sm:p-8 mb-8 sm:mb-10 bg-gradient-to-r from-white to-gray-50 border-b-4 border-primary-600">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => (
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div
-                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-semibold transition-colors ${
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center font-black transition-all duration-300 shadow-md ${
                       currentStep > step.number
-                        ? 'bg-green-600 text-white'
+                        ? 'bg-gradient-to-br from-green-400 to-green-600 text-white scale-110'
                         : currentStep === step.number
-                        ? 'bg-primary-600 text-white'
-                        : 'bg-gray-200 text-gray-600'
+                        ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-lg scale-110'
+                        : 'bg-gray-100 text-gray-400'
                     }`}
                   >
                     {currentStep > step.number ? (
-                      <Check size={20} className="sm:w-6 sm:h-6" />
+                      <Check size={24} />
                     ) : (
-                      <step.icon size={20} className="sm:w-6 sm:h-6" />
+                      <step.icon size={24} />
                     )}
                   </div>
-                  <div className="mt-1 sm:mt-2 text-center">
-                    <div className={`text-xs sm:text-sm font-medium ${
-                      currentStep >= step.number ? 'text-gray-900' : 'text-gray-500'
+                  <div className="mt-3 text-center">
+                    <div className={`text-xs sm:text-sm font-bold transition-colors ${
+                      currentStep >= step.number ? 'text-gray-900' : 'text-gray-400'
                     }`}>
                       <span className="hidden sm:inline">{step.title}</span>
-                      <span className="sm:hidden">{step.number}</span>
+                      <span className="sm:hidden text-lg">{step.number}</span>
                     </div>
                   </div>
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`h-1 flex-1 mx-2 sm:mx-4 transition-colors ${
-                      currentStep > step.number ? 'bg-green-600' : 'bg-gray-200'
+                    className={`h-1.5 flex-1 mx-2 sm:mx-4 rounded-full transition-all duration-300 ${
+                      currentStep > step.number ? 'bg-gradient-to-r from-green-400 to-green-600' : 'bg-gray-200'
                     }`}
                   />
                 )}
@@ -285,25 +285,25 @@ const CreateAd = () => {
           </div>
         </div>
 
-        {/* Error Message */}
+        {/* Error Message - Modern Style */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div className="mb-8 p-4 sm:p-5 bg-red-50 border-l-4 border-red-600 text-red-700 rounded-xl font-bold shadow-md">
             {error}
           </div>
         )}
 
         {/* Step Content */}
-        <div className="card p-8 mb-6">
+        <div className="card p-8 sm:p-10 mb-8">
           {/* Step 1: Basic Info */}
           {currentStep === 1 && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Basic Information</h2>
-                <p className="text-gray-600 mb-6">Let's start with the basics of your ad</p>
+                <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2">Basic Information</h2>
+                <p className="text-gray-600 font-medium text-lg">Let's start with the basics of your ad</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-black text-gray-900 mb-3">
                   Ad Title *
                 </label>
                 <input
@@ -358,14 +358,14 @@ const CreateAd = () => {
 
           {/* Step 2: Details */}
           {currentStep === 2 && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Details & Pricing</h2>
-                <p className="text-gray-600 mb-6">Provide more details about your item</p>
+                <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2">Details & Pricing</h2>
+                <p className="text-gray-600 font-medium text-lg">Provide more details about your item</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-black text-gray-900 mb-3">
                   Description *
                 </label>
                 <textarea
@@ -405,19 +405,19 @@ const CreateAd = () => {
 
           {/* Step 3: Images */}
           {currentStep === 3 && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Add Images</h2>
-                <p className="text-gray-600 mb-6">Upload up to 5 images of your item</p>
+                <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2">Add Images</h2>
+                <p className="text-gray-600 font-medium text-lg">Upload up to 5 images of your item</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-black text-gray-900 mb-4">
                   Images * (Max 5, up to 5MB each)
                 </label>
                 
-                {/* Upload Area */}
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary-500 transition-colors">
+                {/* Upload Area - Modern Design */}
+                <div className="border-2 border-dashed border-primary-300 rounded-2xl p-12 text-center hover:border-primary-500 hover:bg-primary-50 transition-all duration-300 bg-gradient-to-br from-primary-50/50 to-transparent">
                   <input
                     type="file"
                     accept="image/*"
@@ -429,36 +429,38 @@ const CreateAd = () => {
                   />
                   <label
                     htmlFor="image-upload"
-                    className={`cursor-pointer ${imageFiles.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`cursor-pointer block ${imageFiles.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    <Upload className="mx-auto text-gray-400 mb-4" size={48} />
-                    <p className="text-gray-600 mb-2">
+                    <div className="flex items-center justify-center w-16 h-16 bg-primary-100 rounded-2xl mx-auto mb-4">
+                      <Upload className="text-primary-600" size={32} />
+                    </div>
+                    <p className="text-gray-900 font-bold text-lg mb-2">
                       Click to upload or drag and drop
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm font-medium text-gray-600">
                       PNG, JPG, GIF up to 5MB
                     </p>
                   </label>
                 </div>
 
-                {/* Image Previews */}
+                {/* Image Previews - Modern Cards */}
                 {imagePreviews.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
                     {imagePreviews.map((preview, index) => (
                       <div key={index} className="relative group">
                         <img
                           src={preview}
                           alt={`Preview ${index + 1}`}
-                          className="w-full h-40 object-cover rounded-lg"
+                          className="w-full h-40 object-cover rounded-2xl shadow-md group-hover:shadow-lg transition-all duration-300"
                         />
                         <button
                           onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg"
                         >
-                          <X size={16} />
+                          <X size={18} />
                         </button>
                         {index === 0 && (
-                          <div className="absolute bottom-2 left-2 bg-primary-600 text-white text-xs px-2 py-1 rounded">
+                          <div className="absolute bottom-2 left-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md">
                             Main Image
                           </div>
                         )}
@@ -472,48 +474,48 @@ const CreateAd = () => {
 
           {/* Step 4: Review */}
           {currentStep === 4 && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Review Your Ad</h2>
-                <p className="text-gray-600 mb-6">Make sure everything looks good before publishing</p>
+                <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2">Review Your Ad</h2>
+                <p className="text-gray-600 font-medium text-lg">Make sure everything looks good before publishing</p>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Title</h3>
-                  <p className="text-gray-900">{formData.title}</p>
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 space-y-6 border border-gray-100">
+                <div className="pb-6 border-b border-gray-200">
+                  <h3 className="font-black text-gray-700 mb-3 text-sm uppercase tracking-wider">Title</h3>
+                  <p className="text-2xl font-black text-gray-900">{formData.title}</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-6 pb-6 border-b border-gray-200">
                   <div>
-                    <h3 className="font-semibold text-gray-700 mb-2">Category</h3>
-                    <p className="text-gray-900">{formData.category}</p>
+                    <h3 className="font-black text-gray-700 mb-3 text-sm uppercase tracking-wider">Category</h3>
+                    <p className="text-lg font-bold text-primary-600">{formData.category}</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-700 mb-2">Location</h3>
-                    <p className="text-gray-900">{formData.location}</p>
+                    <h3 className="font-black text-gray-700 mb-3 text-sm uppercase tracking-wider">Location</h3>
+                    <p className="text-lg font-bold text-primary-600">{formData.location}</p>
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Description</h3>
-                  <p className="text-gray-900 whitespace-pre-wrap">{formData.description}</p>
+                <div className="pb-6 border-b border-gray-200">
+                  <h3 className="font-black text-gray-700 mb-3 text-sm uppercase tracking-wider">Description</h3>
+                  <p className="text-gray-700 font-medium leading-relaxed whitespace-pre-wrap">{formData.description}</p>
+                </div>
+
+                <div className="pb-6 border-b border-gray-200">
+                  <h3 className="font-black text-gray-700 mb-3 text-sm uppercase tracking-wider">Price</h3>
+                  <p className="text-4xl font-black bg-gradient-to-r from-primary-600 to-blue-600 bg-clip-text text-transparent">{formData.price} TND</p>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Price</h3>
-                  <p className="text-2xl font-bold text-primary-600">{formData.price} TND</p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Images ({imageFiles.length})</h3>
-                  <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+                  <h3 className="font-black text-gray-700 mb-4 text-sm uppercase tracking-wider">Images ({imageFiles.length})</h3>
+                  <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
                     {imagePreviews.map((preview, index) => (
                       <img
                         key={index}
                         src={preview}
                         alt={`Preview ${index + 1}`}
-                        className="w-full h-20 object-cover rounded"
+                        className="w-full h-24 object-cover rounded-xl shadow-md hover:shadow-lg transition-shadow"
                       />
                     ))}
                   </div>
@@ -523,39 +525,39 @@ const CreateAd = () => {
           )}
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between">
+        {/* Navigation Buttons - Modern Design */}
+        <div className="flex justify-between gap-4">
           <button
             onClick={prevStep}
             disabled={currentStep === 1}
-            className="btn-secondary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-secondary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 rounded-xl font-bold text-base hover:shadow-lg transition-all"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={22} />
             <span>Previous</span>
           </button>
 
           {currentStep < 4 ? (
             <button
               onClick={nextStep}
-              className="btn-primary flex items-center space-x-2"
+              className="btn-primary flex items-center space-x-2 px-6 py-3 rounded-xl font-bold text-base hover:shadow-lg transition-all hover:scale-105 hover:-translate-y-0.5"
             >
               <span>Next</span>
-              <ChevronRight size={20} />
+              <ChevronRight size={22} />
             </button>
           ) : (
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="btn-primary flex items-center space-x-2"
+              className="btn-primary flex items-center space-x-2 px-8 py-3 rounded-xl font-bold text-base hover:shadow-lg transition-all hover:scale-105 hover:-translate-y-0.5 disabled:opacity-75 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
                   <span>Publishing...</span>
                 </>
               ) : (
                 <>
-                  <Check size={20} />
+                  <Check size={22} />
                   <span>Publish Ad</span>
                 </>
               )}

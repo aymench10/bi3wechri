@@ -26,14 +26,22 @@ const Navbar = () => {
     <nav className="bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100/50 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 gap-4 lg:gap-8">
-          {/* Logo - Professional Minimal Branding */}
-          <Link to="/" className="flex-shrink-0 group flex items-center space-x-2.5">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-110">
-              <span className="text-white font-black text-lg">B</span>
+          {/* Logo - Professional Modern Marketplace Branding */}
+          <Link to="/" className="flex-shrink-0 group flex items-center space-x-3">
+            <div className="flex items-center justify-center w-11 h-11 bg-gradient-to-br from-primary-600 via-primary-500 to-blue-600 rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 relative overflow-hidden">
+              {/* Animated background gradient */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              {/* Shopping bag icon style */}
+              <svg className="w-6 h-6 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M7 4V3a1 1 0 011-1h8a1 1 0 011 1v1h4a1 1 0 011 1v2h-1.05L15.066 20.573A2 2 0 0113.12 22H10.88a2 2 0 01-1.946-1.427L4.05 8H3a1 1 0 01-1-1V5a1 1 0 011-1h4zm2 0h6V3H9v1z"/>
+              </svg>
             </div>
             <div className="hidden sm:flex flex-col">
-              <span className="text-gray-900 font-black text-base leading-tight">Bi3wEchri</span>
-              <span className="text-primary-600 text-xs font-bold tracking-wide">Marketplace</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-gray-900 font-black text-lg leading-tight">Bi3w</span>
+                <span className="text-primary-600 font-black text-lg">Echri</span>
+              </div>
+              <span className="text-gray-500 text-xs font-bold tracking-widest">MARKETPLACE</span>
             </div>
           </Link>
 
