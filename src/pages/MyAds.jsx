@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
+import { fetchUserAds } from '../lib/dataService'
 import AdCard from '../components/AdCard'
 import { Plus } from 'lucide-react'
 
@@ -9,31 +9,33 @@ const MyAds = () => {
   const { user } = useAuth()
   const [ads, setAds] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all') // all, active, pending, rejected
 
   useEffect(() => {
-    fetchMyAds()
-  }, [user, filter])
+    if (user?.id) {
+      fetchMyAds()
+    }
+  }, [user?.id, filter])
 
   const fetchMyAds = async () => {
     try {
       setLoading(true)
-      let query = supabase
-        .from('ads')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+      setError(null)
 
-      if (filter !== 'all') {
-        query = query.eq('status', filter)
+      const result = await fetchUserAds(user.id, {
+        status: filter !== 'all' ? filter : null
+      })
+
+      if (result.success) {
+        setAds(result.data || [])
+      } else {
+        throw new Error('Failed to fetch your ads')
       }
-
-      const { data, error } = await query
-
-      if (error) throw error
-      setAds(data || [])
-    } catch (error) {
-      console.error('Error fetching ads:', error)
+    } catch (err) {
+      console.error('Error fetching ads:', err)
+      setError(err.message)
+      setAds([])
     } finally {
       setLoading(false)
     }

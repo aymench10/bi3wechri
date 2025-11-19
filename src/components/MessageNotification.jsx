@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { MessageCircle } from 'lucide-react'
 import { playMessageNotificationSound } from '../lib/notificationSound'
 
-const MessageNotification = () => {
+const MessageNotification = ({ onNavigate }) => {
   const { user } = useAuth()
   const [unreadCount, setUnreadCount] = useState(0)
   const prevUnreadCountRef = useRef(0)

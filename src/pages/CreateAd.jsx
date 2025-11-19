@@ -171,38 +171,76 @@ const CreateAd = () => {
       setLoading(true)
       setError('')
 
-      // Upload images to Supabase Storage
+      if (!user || !user.id) {
+        throw new Error('User not authenticated. Please log in again.')
+      }
+
+      // Upload images to Supabase Storage with retry logic
       const imageUrls = []
-      for (const file of imageFiles) {
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i]
         const fileExt = file.name.split('.').pop()
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
         const filePath = `${user.id}/${fileName}`
 
-        console.log('Uploading image:', filePath)
+        console.log(`Uploading image ${i + 1}/${imageFiles.length}:`, filePath)
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('ad-images')
-          .upload(filePath, file, {
-            cacheControl: '3600',
-            upsert: false
-          })
+        let uploadError = null
+        let uploadData = null
+        let retries = 0
+        const maxRetries = 3
+
+        // Retry logic for image upload
+        while (retries < maxRetries) {
+          const result = await supabase.storage
+            .from('ad-images')
+            .upload(filePath, file, {
+              cacheControl: '3600',
+              upsert: false
+            })
+
+          uploadError = result.error
+          uploadData = result.data
+
+          if (!uploadError) {
+            console.log(`Image ${i + 1} uploaded successfully on attempt ${retries + 1}`)
+            break
+          }
+
+          retries++
+          if (retries < maxRetries) {
+            console.warn(`Upload attempt ${retries} failed, retrying...`, uploadError)
+            await new Promise(resolve => setTimeout(resolve, 1000 * retries)) // Exponential backoff
+          }
+        }
 
         if (uploadError) {
-          console.error('Upload error:', uploadError)
-          throw new Error(`Failed to upload image: ${uploadError.message}`)
+          console.error('Upload error after retries:', uploadError)
+          throw new Error(`Failed to upload image ${i + 1}: ${uploadError.message || 'Unknown error'}`)
         }
 
         const { data: { publicUrl } } = supabase.storage
           .from('ad-images')
           .getPublicUrl(filePath)
 
-        console.log('Image uploaded:', publicUrl)
+        console.log(`Image ${i + 1} public URL:`, publicUrl)
         imageUrls.push(publicUrl)
       }
 
-      console.log('All images uploaded:', imageUrls)
+      console.log('All images uploaded successfully:', imageUrls)
 
-      // Create ad in database
+      // Create ad in database with 'pending' status for admin approval
+      console.log('Creating ad with data:', {
+        user_id: user.id,
+        title: formData.title,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        location: formData.location,
+        images: imageUrls,
+        status: 'pending'
+      })
+
       const { data, error: insertError } = await supabase
         .from('ads')
         .insert([
@@ -214,22 +252,28 @@ const CreateAd = () => {
             category: formData.category,
             location: formData.location,
             images: imageUrls,
-            status: 'active'
+            status: 'pending'
           }
         ])
         .select()
 
       if (insertError) {
-        console.error('Insert error:', insertError)
-        throw new Error(`Failed to create ad: ${insertError.message}`)
+        console.error('Insert error details:', insertError)
+        throw new Error(`Failed to create ad: ${insertError.message || insertError.error_description || 'Unknown error'}`)
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error('Ad was created but no data returned. Please check your ads.')
       }
 
       console.log('Ad created successfully:', data)
+      // Show success message and redirect
+      alert('Ad published successfully! It will appear after admin approval.')
       navigate('/my-ads')
     } catch (error) {
       console.error('Error creating ad:', error)
-      setError(error.message || 'Failed to create ad. Please try again.')
-    } finally {
+      const errorMsg = error.message || 'Failed to create ad. Please try again.'
+      setError(errorMsg)
       setLoading(false)
     }
   }

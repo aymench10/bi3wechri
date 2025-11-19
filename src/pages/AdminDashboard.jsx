@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
 import { Link } from 'react-router-dom'
 import { Check, X, Eye, Users, FileText, AlertCircle, Search, TrendingUp, Package, DollarSign, ArrowUpDown, Trash2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import StatsCard from '../components/StatsCard'
+import { fetchAdminStats, updateAdStatus, deleteAd, updateUserRole } from '../lib/dataService'
 
 const AdminDashboard = () => {
   const [ads, setAds] = useState([])
@@ -17,6 +17,7 @@ const AdminDashboard = () => {
     todayAds: 0
   })
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState('stats')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('created_at')
@@ -29,37 +30,20 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       setLoading(true)
+      setError(null)
 
-      const { data: adsData, error: adsError } = await supabase
-        .from('ads')
-        .select('*, profiles(full_name, email)')
-        .order('created_at', { ascending: false })
+      const result = await fetchAdminStats()
 
-      if (adsError) throw adsError
-
-      const { data: usersData, error: usersError} = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (usersError) throw usersError
-
-      setAds(adsData || [])
-      setUsers(usersData || [])
-
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      
-      setStats({
-        totalAds: adsData.length,
-        pendingAds: adsData.filter(ad => ad.status === 'pending').length,
-        activeAds: adsData.filter(ad => ad.status === 'active').length,
-        rejectedAds: adsData.filter(ad => ad.status === 'rejected').length,
-        totalUsers: usersData.length,
-        todayAds: adsData.filter(ad => new Date(ad.created_at) >= today).length
-      })
-    } catch (error) {
-      console.error('Error fetching data:', error)
+      if (result.success) {
+        setAds(result.ads || [])
+        setUsers(result.users || [])
+        setStats(result.stats)
+      } else {
+        throw new Error('Failed to fetch admin stats')
+      }
+    } catch (err) {
+      console.error('Error fetching data:', err)
+      setError(err.message || 'Failed to load data')
     } finally {
       setLoading(false)
     }
@@ -69,16 +53,16 @@ const AdminDashboard = () => {
     try {
       const newStatus = action === 'approve' ? 'active' : 'rejected'
       
-      const { error } = await supabase
-        .from('ads')
-        .update({ status: newStatus })
-        .eq('id', adId)
+      const result = await updateAdStatus(adId, newStatus)
 
-      if (error) throw error
-      fetchData()
-    } catch (error) {
-      console.error('Error updating ad:', error)
-      alert('Failed to update ad')
+      if (result.success) {
+        await fetchData()
+      } else {
+        throw new Error('Failed to update ad')
+      }
+    } catch (err) {
+      console.error('Error updating ad:', err)
+      alert(`Failed to update ad: ${err.message}`)
     }
   }
 
@@ -86,16 +70,16 @@ const AdminDashboard = () => {
     if (!confirm('Are you sure you want to delete this ad?')) return
 
     try {
-      const { error } = await supabase
-        .from('ads')
-        .delete()
-        .eq('id', adId)
+      const result = await deleteAd(adId)
 
-      if (error) throw error
-      fetchData()
-    } catch (error) {
-      console.error('Error deleting ad:', error)
-      alert('Failed to delete ad')
+      if (result.success) {
+        await fetchData()
+      } else {
+        throw new Error('Failed to delete ad')
+      }
+    } catch (err) {
+      console.error('Error deleting ad:', err)
+      alert(`Failed to delete ad: ${err.message}`)
     }
   }
 
@@ -103,16 +87,16 @@ const AdminDashboard = () => {
     try {
       const newRole = currentRole === 'admin' ? 'user' : 'admin'
       
-      const { error } = await supabase
-        .from('profiles')
-        .update({ role: newRole })
-        .eq('id', userId)
+      const result = await updateUserRole(userId, newRole)
 
-      if (error) throw error
-      fetchData()
-    } catch (error) {
-      console.error('Error updating user role:', error)
-      alert('Failed to update user role')
+      if (result.success) {
+        await fetchData()
+      } else {
+        throw new Error('Failed to update user role')
+      }
+    } catch (err) {
+      console.error('Error updating user role:', err)
+      alert(`Failed to update user role: ${err.message}`)
     }
   }
 
