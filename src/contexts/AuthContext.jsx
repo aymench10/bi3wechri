@@ -20,19 +20,24 @@ export const AuthProvider = ({ children }) => {
   // Initialize auth and listen for session changes
   useEffect(() => {
     let mounted = true
+    let authInitialized = false
 
     // Get initial session
     const initializeAuth = async () => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         
-        if (sessionError) throw sessionError
+        if (sessionError) {
+          console.error('Session error:', sessionError)
+          throw sessionError
+        }
 
         if (mounted) {
           setUser(session?.user ?? null)
           if (session?.user) {
             await fetchProfile(session.user.id)
           } else {
+            setProfile(null)
             setLoading(false)
           }
         }
@@ -40,8 +45,11 @@ export const AuthProvider = ({ children }) => {
         console.error('Error initializing auth:', err)
         if (mounted) {
           setError(err.message)
+          setProfile(null)
           setLoading(false)
         }
+      } finally {
+        authInitialized = true
       }
     }
 
@@ -60,12 +68,13 @@ export const AuthProvider = ({ children }) => {
       }
     })
 
-    // Set a timeout to ensure loading is never stuck
+    // Set a timeout to ensure loading is never stuck (3 seconds)
     const loadingTimeout = setTimeout(() => {
-      if (mounted) {
+      if (mounted && authInitialized) {
+        console.warn('Auth loading timeout - forcing loading state to false')
         setLoading(false)
       }
-    }, 5000)
+    }, 3000)
 
     return () => {
       mounted = false
@@ -89,6 +98,7 @@ export const AuthProvider = ({ children }) => {
           console.log('Profile not found, will be created on first update')
           setProfile(null)
         } else {
+          console.error('Error fetching profile:', error)
           throw error
         }
       } else {
@@ -97,6 +107,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('Error fetching profile:', err)
       setError(err.message)
+      setProfile(null)
     } finally {
       setLoading(false)
     }

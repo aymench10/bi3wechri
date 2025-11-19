@@ -175,7 +175,7 @@ const CreateAd = () => {
         throw new Error('User not authenticated. Please log in again.')
       }
 
-      // Upload images to Supabase Storage
+      // Upload images to Supabase Storage with retry logic
       const imageUrls = []
       for (let i = 0; i < imageFiles.length; i++) {
         const file = imageFiles[i]
@@ -185,23 +185,45 @@ const CreateAd = () => {
 
         console.log(`Uploading image ${i + 1}/${imageFiles.length}:`, filePath)
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('ad-images')
-          .upload(filePath, file, {
-            cacheControl: '3600',
-            upsert: false
-          })
+        let uploadError = null
+        let uploadData = null
+        let retries = 0
+        const maxRetries = 3
+
+        // Retry logic for image upload
+        while (retries < maxRetries) {
+          const result = await supabase.storage
+            .from('ad-images')
+            .upload(filePath, file, {
+              cacheControl: '3600',
+              upsert: false
+            })
+
+          uploadError = result.error
+          uploadData = result.data
+
+          if (!uploadError) {
+            console.log(`Image ${i + 1} uploaded successfully on attempt ${retries + 1}`)
+            break
+          }
+
+          retries++
+          if (retries < maxRetries) {
+            console.warn(`Upload attempt ${retries} failed, retrying...`, uploadError)
+            await new Promise(resolve => setTimeout(resolve, 1000 * retries)) // Exponential backoff
+          }
+        }
 
         if (uploadError) {
-          console.error('Upload error:', uploadError)
-          throw new Error(`Failed to upload image ${i + 1}: ${uploadError.message}`)
+          console.error('Upload error after retries:', uploadError)
+          throw new Error(`Failed to upload image ${i + 1}: ${uploadError.message || 'Unknown error'}`)
         }
 
         const { data: { publicUrl } } = supabase.storage
           .from('ad-images')
           .getPublicUrl(filePath)
 
-        console.log(`Image ${i + 1} uploaded:`, publicUrl)
+        console.log(`Image ${i + 1} public URL:`, publicUrl)
         imageUrls.push(publicUrl)
       }
 

@@ -78,7 +78,7 @@ const Navbar = () => {
                   <Heart size={18} />
                   <span className="hidden lg:inline">Favorites</span>
                 </Link>
-                <MessageNotification />
+                <MessageNotification onNavigate={() => setMobileMenuOpen(false)} />
                 <NotificationBell />
                 {isAdmin && (
                   <Link to="/admin" className="text-gray-700 hover:text-primary-600 hover:bg-primary-50 px-3 py-2.5 rounded-lg transition-all duration-200 flex items-center space-x-1.5 font-medium text-sm">
@@ -133,9 +133,9 @@ const Navbar = () => {
                 <Link to="/favorites" className="text-gray-700 hover:text-primary-600 hover:bg-primary-50 py-2.5 px-3 rounded-lg font-bold transition-colors" onClick={() => setMobileMenuOpen(false)}>
                   Favorites
                 </Link>
-                <div onClick={() => setMobileMenuOpen(false)}>
-                  <MessageNotification />
-                </div>
+                <Link to="/messages" className="text-gray-700 hover:text-primary-600 hover:bg-primary-50 py-2.5 px-3 rounded-lg font-bold transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  Messages
+                </Link>
                 {isAdmin && (
                   <Link to="/admin" className="text-gray-700 hover:text-primary-600 hover:bg-primary-50 py-2.5 px-3 rounded-lg font-bold transition-colors" onClick={() => setMobileMenuOpen(false)}>
                     Admin Dashboard
