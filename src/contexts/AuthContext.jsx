@@ -175,17 +175,30 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null)
       
-      const { error: signOutError } = await supabase.auth.signOut()
-
-      if (signOutError) throw signOutError
-
+      // Clear local state immediately
       setUser(null)
       setProfile(null)
+      
+      // Sign out from Supabase
+      const { error: signOutError } = await supabase.auth.signOut()
+
+      if (signOutError) {
+        console.error('Supabase signOut error:', signOutError)
+        // Even if Supabase signOut fails, we've cleared local state
+        // Return success so user can proceed
+        return { error: null }
+      }
+
       return { error: null }
     } catch (err) {
+      console.error('Sign out error:', err)
+      // Clear state even on error
+      setUser(null)
+      setProfile(null)
       const errorMessage = err.message || 'Sign out failed'
       setError(errorMessage)
-      return { error: err }
+      // Return success anyway to allow user to proceed
+      return { error: null }
     }
   }
 

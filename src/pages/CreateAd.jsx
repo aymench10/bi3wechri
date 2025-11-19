@@ -202,7 +202,7 @@ const CreateAd = () => {
 
       console.log('All images uploaded:', imageUrls)
 
-      // Create ad in database
+      // Create ad in database with 'pending' status for admin approval
       const { data, error: insertError } = await supabase
         .from('ads')
         .insert([
@@ -214,7 +214,7 @@ const CreateAd = () => {
             category: formData.category,
             location: formData.location,
             images: imageUrls,
-            status: 'active'
+            status: 'pending'
           }
         ])
         .select()
@@ -225,6 +225,8 @@ const CreateAd = () => {
       }
 
       console.log('Ad created successfully:', data)
+      // Show success message and redirect
+      alert('Ad published successfully! It will appear after admin approval.')
       navigate('/my-ads')
     } catch (error) {
       console.error('Error creating ad:', error)

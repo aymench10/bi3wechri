@@ -18,17 +18,19 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     try {
-      const { error } = await signOut()
-      if (error) {
-        console.error('Logout error:', error)
-        alert('Failed to logout. Please try again.')
-        return
-      }
-      navigate('/')
+      // Call signOut function
+      await signOut()
+      
+      // Close mobile menu
       setMobileMenuOpen(false)
+      
+      // Navigate to home page
+      navigate('/', { replace: true })
     } catch (err) {
       console.error('Logout error:', err)
-      alert('Failed to logout. Please try again.')
+      // Still navigate even if error occurs
+      setMobileMenuOpen(false)
+      navigate('/', { replace: true })
     }
   }
 
