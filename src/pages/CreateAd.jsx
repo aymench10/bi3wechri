@@ -171,14 +171,19 @@ const CreateAd = () => {
       setLoading(true)
       setError('')
 
+      if (!user || !user.id) {
+        throw new Error('User not authenticated. Please log in again.')
+      }
+
       // Upload images to Supabase Storage
       const imageUrls = []
-      for (const file of imageFiles) {
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i]
         const fileExt = file.name.split('.').pop()
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
         const filePath = `${user.id}/${fileName}`
 
-        console.log('Uploading image:', filePath)
+        console.log(`Uploading image ${i + 1}/${imageFiles.length}:`, filePath)
 
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('ad-images')
@@ -189,20 +194,31 @@ const CreateAd = () => {
 
         if (uploadError) {
           console.error('Upload error:', uploadError)
-          throw new Error(`Failed to upload image: ${uploadError.message}`)
+          throw new Error(`Failed to upload image ${i + 1}: ${uploadError.message}`)
         }
 
         const { data: { publicUrl } } = supabase.storage
           .from('ad-images')
           .getPublicUrl(filePath)
 
-        console.log('Image uploaded:', publicUrl)
+        console.log(`Image ${i + 1} uploaded:`, publicUrl)
         imageUrls.push(publicUrl)
       }
 
-      console.log('All images uploaded:', imageUrls)
+      console.log('All images uploaded successfully:', imageUrls)
 
       // Create ad in database with 'pending' status for admin approval
+      console.log('Creating ad with data:', {
+        user_id: user.id,
+        title: formData.title,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        location: formData.location,
+        images: imageUrls,
+        status: 'pending'
+      })
+
       const { data, error: insertError } = await supabase
         .from('ads')
         .insert([
@@ -220,8 +236,12 @@ const CreateAd = () => {
         .select()
 
       if (insertError) {
-        console.error('Insert error:', insertError)
-        throw new Error(`Failed to create ad: ${insertError.message}`)
+        console.error('Insert error details:', insertError)
+        throw new Error(`Failed to create ad: ${insertError.message || insertError.error_description || 'Unknown error'}`)
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error('Ad was created but no data returned. Please check your ads.')
       }
 
       console.log('Ad created successfully:', data)
@@ -230,8 +250,8 @@ const CreateAd = () => {
       navigate('/my-ads')
     } catch (error) {
       console.error('Error creating ad:', error)
-      setError(error.message || 'Failed to create ad. Please try again.')
-    } finally {
+      const errorMsg = error.message || 'Failed to create ad. Please try again.'
+      setError(errorMsg)
       setLoading(false)
     }
   }
