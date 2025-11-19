@@ -60,9 +60,17 @@ export const AuthProvider = ({ children }) => {
       }
     })
 
+    // Set a timeout to ensure loading is never stuck
+    const loadingTimeout = setTimeout(() => {
+      if (mounted) {
+        setLoading(false)
+      }
+    }, 5000)
+
     return () => {
       mounted = false
       subscription?.unsubscribe()
+      clearTimeout(loadingTimeout)
     }
   }, [])
 
