@@ -1,62 +1,32 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { fetchSimilarAds } from '../lib/dataService'
 import AdCard from './AdCard'
 
 const SimilarAds = ({ currentAdId, category, location, limit = 4 }) => {
   const [ads, setAds] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetchSimilarAds()
+    loadSimilarAds()
   }, [currentAdId, category, location])
 
-  const fetchSimilarAds = async () => {
+  const loadSimilarAds = async () => {
     try {
       setLoading(true)
-      
-      // Fetch ads with same category or location, excluding current ad
-      let query = supabase
-        .from('ads')
-        .select('*')
-        .eq('status', 'active')
-        .neq('id', currentAdId)
-        .limit(limit)
+      setError(null)
 
-      // Prioritize same category
-      if (category) {
-        query = query.eq('category', category)
-      }
+      const result = await fetchSimilarAds(currentAdId, category, location, limit)
 
-      const { data, error } = await query.order('created_at', { ascending: false })
-
-      if (error) throw error
-
-      // If not enough ads with same category, fetch more with same location
-      if (data && data.length < limit && location) {
-        const { data: locationAds, error: locationError } = await supabase
-          .from('ads')
-          .select('*')
-          .eq('status', 'active')
-          .eq('location', location)
-          .neq('id', currentAdId)
-          .limit(limit - data.length)
-          .order('created_at', { ascending: false })
-
-        if (!locationError && locationAds) {
-          // Combine and remove duplicates
-          const combined = [...data, ...locationAds]
-          const unique = combined.filter((ad, index, self) =>
-            index === self.findIndex((a) => a.id === ad.id)
-          )
-          setAds(unique.slice(0, limit))
-        } else {
-          setAds(data)
-        }
+      if (result.success) {
+        setAds(result.data || [])
       } else {
-        setAds(data || [])
+        throw new Error('Failed to fetch similar ads')
       }
-    } catch (error) {
-      console.error('Error fetching similar ads:', error)
+    } catch (err) {
+      console.error('Error fetching similar ads:', err)
+      setError(err.message)
+      setAds([])
     } finally {
       setLoading(false)
     }
