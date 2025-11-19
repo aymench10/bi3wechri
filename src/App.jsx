@@ -4,6 +4,8 @@ import Layout from './components/Layout'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import CreateAd from './pages/CreateAd'
 import EditAd from './pages/EditAd'
 import AdDetail from './pages/AdDetail'
@@ -25,6 +27,8 @@ function App() {
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="auth/reset-password" element={<ResetPassword />} />
             <Route path="ads/:id" element={<AdDetail />} />
             <Route path="profile/:userId" element={<Profile />} />
             
