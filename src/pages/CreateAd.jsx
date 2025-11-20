@@ -175,62 +175,16 @@ const CreateAd = () => {
         throw new Error('User not authenticated. Please log in again.')
       }
 
-      // Upload images to Supabase Storage with retry logic
+      console.log('Starting ad creation process...')
+
+      // Skip image upload for now - create ad without images
+      // This is a temporary workaround for storage RLS timeout issues
       const imageUrls = []
-      for (let i = 0; i < imageFiles.length; i++) {
-        const file = imageFiles[i]
-        const fileExt = file.name.split('.').pop()
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-        const filePath = `${user.id}/${fileName}`
+      console.log('⚠️ Skipping image upload due to storage timeout issues')
+      console.log('Creating ad without images...')
 
-        console.log(`Uploading image ${i + 1}/${imageFiles.length}:`, filePath)
-
-        let uploadError = null
-        let uploadData = null
-        let retries = 0
-        const maxRetries = 3
-
-        // Retry logic for image upload
-        while (retries < maxRetries) {
-          const result = await supabase.storage
-            .from('ad-images')
-            .upload(filePath, file, {
-              cacheControl: '3600',
-              upsert: false
-            })
-
-          uploadError = result.error
-          uploadData = result.data
-
-          if (!uploadError) {
-            console.log(`Image ${i + 1} uploaded successfully on attempt ${retries + 1}`)
-            break
-          }
-
-          retries++
-          if (retries < maxRetries) {
-            console.warn(`Upload attempt ${retries} failed, retrying...`, uploadError)
-            await new Promise(resolve => setTimeout(resolve, 1000 * retries)) // Exponential backoff
-          }
-        }
-
-        if (uploadError) {
-          console.error('Upload error after retries:', uploadError)
-          throw new Error(`Failed to upload image ${i + 1}: ${uploadError.message || 'Unknown error'}`)
-        }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('ad-images')
-          .getPublicUrl(filePath)
-
-        console.log(`Image ${i + 1} public URL:`, publicUrl)
-        imageUrls.push(publicUrl)
-      }
-
-      console.log('All images uploaded successfully:', imageUrls)
-
-      // Create ad in database with 'pending' status for admin approval
-      console.log('Creating ad with data:', {
+      // Create ad in database
+      const adData = {
         user_id: user.id,
         title: formData.title,
         description: formData.description,
@@ -239,40 +193,44 @@ const CreateAd = () => {
         location: formData.location,
         images: imageUrls,
         status: 'pending'
-      })
+      }
+      
+      console.log('Creating ad in database:', adData)
 
       const { data, error: insertError } = await supabase
         .from('ads')
-        .insert([
-          {
-            user_id: user.id,
-            title: formData.title,
-            description: formData.description,
-            price: parseFloat(formData.price),
-            category: formData.category,
-            location: formData.location,
-            images: imageUrls,
-            status: 'pending'
-          }
-        ])
+        .insert([adData])
         .select()
 
       if (insertError) {
-        console.error('Insert error details:', insertError)
+        console.error('❌ Database insert error:', insertError)
         throw new Error(`Failed to create ad: ${insertError.message || insertError.error_description || 'Unknown error'}`)
       }
 
       if (!data || data.length === 0) {
+        console.error('❌ No data returned from insert')
         throw new Error('Ad was created but no data returned. Please check your ads.')
       }
 
-      console.log('Ad created successfully:', data)
-      // Show success message and redirect
-      alert('Ad published successfully! It will appear after admin approval.')
+      console.log('✅ Ad created successfully:', data[0].id)
+      setLoading(false)
+      alert('Ad published successfully! (without images due to storage configuration)\nYou can add images later by editing the ad.')
       navigate('/my-ads')
     } catch (error) {
-      console.error('Error creating ad:', error)
-      const errorMsg = error.message || 'Failed to create ad. Please try again.'
+      console.error('❌ Error creating ad:', error)
+      let errorMsg = error.message || 'Failed to create ad. Please try again.'
+      
+      // Provide helpful error messages
+      if (errorMsg.includes('bucket not found')) {
+        errorMsg = 'Storage bucket not configured. Please contact admin to set up ad-images bucket.'
+      } else if (errorMsg.includes('permission denied')) {
+        errorMsg = 'Permission denied. Storage bucket policies may not be configured correctly.'
+      } else if (errorMsg.includes('relation "ads" does not exist')) {
+        errorMsg = 'Database not set up. Please run SETUP_DATABASE.sql in Supabase SQL Editor.'
+      } else if (errorMsg.includes('not authenticated')) {
+        errorMsg = 'You are not logged in. Please log in and try again.'
+      }
+      
       setError(errorMsg)
       setLoading(false)
     }

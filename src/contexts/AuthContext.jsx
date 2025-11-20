@@ -1,11 +1,25 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
-const AuthContext = createContext({})
+const AuthContext = createContext({
+  user: null,
+  profile: null,
+  loading: true,
+  error: null,
+  signUp: () => { throw new Error('AuthProvider not initialized') },
+  signIn: () => { throw new Error('AuthProvider not initialized') },
+  signOut: () => { throw new Error('AuthProvider not initialized') },
+  updateProfile: () => { throw new Error('AuthProvider not initialized') },
+  updateEmail: () => { throw new Error('AuthProvider not initialized') },
+  updatePassword: () => { throw new Error('AuthProvider not initialized') },
+  isAdmin: false,
+  isAuthenticated: false
+})
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
   if (!context) {
+    console.error('useAuth called outside of AuthProvider')
     throw new Error('useAuth must be used within an AuthProvider')
   }
   return context
@@ -49,7 +63,9 @@ export const AuthProvider = ({ children }) => {
           setLoading(false)
         }
       } finally {
-        authInitialized = true
+        if (mounted) {
+          authInitialized = true
+        }
       }
     }
 
@@ -58,6 +74,7 @@ export const AuthProvider = ({ children }) => {
     // Listen for auth state changes (session persistence)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (mounted) {
+        console.log('Auth state changed:', _event, session?.user?.id)
         setUser(session?.user ?? null)
         if (session?.user) {
           await fetchProfile(session.user.id)
@@ -68,13 +85,13 @@ export const AuthProvider = ({ children }) => {
       }
     })
 
-    // Set a timeout to ensure loading is never stuck (3 seconds)
+    // Set a timeout to ensure loading is never stuck (5 seconds)
     const loadingTimeout = setTimeout(() => {
-      if (mounted && authInitialized) {
+      if (mounted) {
         console.warn('Auth loading timeout - forcing loading state to false')
         setLoading(false)
       }
-    }, 3000)
+    }, 5000)
 
     return () => {
       mounted = false
